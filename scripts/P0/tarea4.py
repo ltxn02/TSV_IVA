@@ -1,3 +1,7 @@
+# Tratamiento de Señales Visuales/Introducción a la Visión Artificial @ EPS-UAM
+# Práctica 0: Introducción a Python
+# AUTORA: Lidia Martín Terés
+
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage import io, color
