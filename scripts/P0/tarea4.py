@@ -2,15 +2,18 @@
 # Práctica 0: Introducción a Python
 # AUTORA: Lidia Martín Terés
 import matplotlib.pyplot as plt
-import numpy as np
+from pathlib import Path
 from skimage import io, color
 
 print("Práctica 0 - Tarea 4\n")
 
 # 1. Leer y visualizar la imagen
-img = io.imread('images/A_small_cup_of_coffee.jfif')
 # La URL dada (https://bit.ly/2Zjkcm7) estaba dando problemas para la lectura de la imagen, así que se ha decidido
 # descargar la imagen y leer la imagen descargada en su lugar.
+
+# Ruta independiente a la imagen
+img_path = Path(__file__).resolve().parent / "images" / "A_small_cup_of_coffee.jfif"
+img = io.imread(img_path)
 
 plt.imshow(img)
 plt.show()
