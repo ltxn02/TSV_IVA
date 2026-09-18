@@ -1,7 +1,6 @@
 # Tratamiento de Señales Visuales/Introducción a la Visión Artificial @ EPS-UAM
 # Práctica 0: Introducción a Python
 # AUTORA: Lidia Martín Terés
-
 import numpy as np
 import matplotlib.pyplot as plt
 x = np. arange(0, 3 * np.pi, 0.1)

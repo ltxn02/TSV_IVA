@@ -1,10 +1,11 @@
 # Tratamiento de Señales Visuales/Introducción a la Visión Artificial @ EPS-UAM
 # Práctica 0: Introducción a Python
 # AUTORA: Lidia Martín Terés
-
 import matplotlib.pyplot as plt
 import numpy as np
 from skimage import io, color
+
+print("Práctica 0 - Tarea 4\n")
 
 # 1. Leer y visualizar la imagen
 img = io.imread('images/A_small_cup_of_coffee.jfif')

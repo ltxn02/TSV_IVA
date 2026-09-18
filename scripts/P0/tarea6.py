@@ -1,10 +1,11 @@
 # Tratamiento de Señales Visuales/Introducción a la Visión Artificial @ EPS-UAM
 # Práctica 0: Introducción a Python
 # AUTORA: Lidia Martín Terés
-
 import numpy as np
 import matplotlib.pyplot as plt
 from skimage import data
+
+print("Práctica 0 - Tarea 6\n")
 
 # 1. Lista vacía
 lista_img = []
