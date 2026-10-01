@@ -25,7 +25,14 @@ def reduce(imagen):
     """   
     output = np.empty(shape=[0,0]) # iniciamos la variable de salida (numpy array)
 
-    #...
+    # 1. Crea el kernel de suavizado con a = 0.4
+    kernel = generar_kernel_suavizado(0.4)
+    
+    # 2. Convoluciona la imagen con el kernel, manteniendo las dimensiones de la imagen
+    img_suavizada = scipy.signal.convolve2d(imagen, kernel, 'same')
+    
+    # 3. Muestrea la imagen por 2 en ambas direcciones (resulta en una imagen más pequeña)
+    output = img_suavizada[::2, ::2]
    
     return output  
 
@@ -41,7 +48,23 @@ def expand(imagen):
     """ 
     output = np.empty(shape=[0,0]) # iniciamos la variable de salida (numpy array)
 
-    #...
+    # 1. Define una imagen completamente negra del tamaño expandido
+    alto, ancho = imagen.shape
+    img_expandida = np.zeros((alto*2, ancho*2), dtype=float)
+    
+    # 2. Coloca la imagen original en las posiciones pares
+    img_expandida[::2, ::2] = imagen
+    
+    # 3. Crea el kernel de suavizado con a = 0.4
+    kernel = generar_kernel_suavizado(0.4)
+    
+    # 4. Convoluciona la imagen con el kernel, manteniendo las dimensiones de la imagen
+    img_suavizada = scipy.signal.convolve2d(img_expandida, kernel, 'same')
+    
+    # 5. Multiplica por 4 para mantener el rango
+    #       Este paso se hace para evitar que los colores queden artificialmente oscurecidos
+    #       al haberlos suavizado con píxeles de valor 0.
+    output = 4 * img_suavizada
 
     return output
 
