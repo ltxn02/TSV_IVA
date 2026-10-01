@@ -2,9 +2,7 @@
 # Practica 1: Fusion de imagenes mediante piramides
 # Tarea 2: piramide Gaussiana y piramide laplaciana
 
-# AUTOR1: APELLIDO1 APELLIDO1, NOMBRE1
-# AUTOR2: APELLIDO2 APELLIDO2, NOMBRE2
-# PAREJA/TURNO: NUMERO_PAREJA/NUMERO_TURNO
+# AUTORA: Lidia Martín Terés
 import numpy as np
 from p1_tests import test_p1_tarea2
 from p1_tarea1 import reduce, expand
@@ -27,7 +25,12 @@ def gaus_piramide(imagen, niveles):
     """ 
     gaus_pyr = []  # iniciamos la variable de salida (lista)
 
-    #...
+    gaus_pyr.append(imagen)
+    img_actual = imagen
+    
+    for _ in range(niveles):
+        img_actual = reduce(img_actual)
+        gaus_pyr.append(img_actual)
 
     return gaus_pyr
 
@@ -54,9 +57,21 @@ def lapl_piramide(gaus_pyr):
     #   columna para obtener una imagen de tamaño 5x7 donde pueda aplicar la resta      
     """ 
     lapl_pyr = [] # iniciamos la variable de salida (lista) 
+    
+    # Calcula todos los niveles que sí tienen el siguiente nivel
+    for i in range(len(gaus_pyr) - 1):
+        img_expandida = expand(gaus_pyr[i+1])
+        
+        # Puede darse que las dimensiones de la imagen expandida sean mayores que la que necesitamos,
+        # así que se recorta.
+        alto, ancho = gaus_pyr[i].shape
+        img_expandida = img_expandida[:alto, :ancho]
+        
+        # Nivel Laplaciano = Nivel Gaussiano - expansión del siguiente Nivel Gaussiano
+        nvl_lapl = gaus_pyr[i] - img_expandida
+        lapl_pyr.append(nvl_lapl)
 
-    #...
-
+    lapl_pyr.append(gaus_pyr[-1])
     return lapl_pyr
    
 if __name__ == "__main__":    
