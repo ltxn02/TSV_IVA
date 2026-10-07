@@ -2,11 +2,10 @@
 # Practica 1: Fusion de imagenes mediante piramides
 # Tarea 3: fusion de piramides y reconstruccion
 
-# AUTOR1: APELLIDO1 APELLIDO1, NOMBRE1
-# AUTOR2: APELLIDO2 APELLIDO2, NOMBRE2
-# PAREJA/TURNO: NUMERO_PAREJA/NUMERO_TURNO
+# AUTORA: Lidia Martín Terés
 
 import numpy as np
+import scipy
 from p1_tests import test_p1_tarea3
 from p1_tarea1 import expand
 
@@ -31,9 +30,16 @@ def fusionar_lapl_pyr(lapl_pyr_imgA, lapl_pyr_imgB, gaus_pyr_mask):
     #       fusion_pyr[i] es el nivel i de la piramide que contiene bordes
     #       fusion_pyr[niveles] es una imagen (RGB o escala de grises)
     """ 
+    if not (len(lapl_pyr_imgA) == len(lapl_pyr_imgB) == len(gaus_pyr_mask)):
+        return
+    
     fusion_pyr = [] # iniciamos la variable
 
-    #...
+    for _ in range(len(lapl_pyr_imgA)):
+        nivel_A = scipy.signal.convolve2d(lapl_pyr_imgA, gaus_pyr_mask, 'same')
+        nivel_B = scipy.signal.convolve2d(lapl_pyr_imgB, (1 - gaus_pyr_mask), 'same')
+        
+        fusion_pyr.append(nivel_A + nivel_B)
     
     return fusion_pyr
 
@@ -58,7 +64,10 @@ def reconstruir_lapl_pyr(lapl_pyr):
     """ 
     output = np.empty(shape=[0,0]) # iniciamos la variable de salida (numpy array)
 
-    #...
+    output = lapl_pyr[-1]
+    
+    for nvl in reversed(lapl_pyr[:-1]):
+        output = expand(output) + nvl
     
     return output
 
