@@ -3,8 +3,9 @@ TRATAMIENTO DE SEÑALES VISUALES / INTRODUCCIÓN A LA VISIÓN ARTIFICIAL (CURSO 
 Alumna: Lidia Martín Terés
 =========================================================================================
 
-IMPORTANTE: Esta guía permite la creación de un entorno virtual volátil apto para la
-realización de las prácticas de TSV/IVA en caso de que el entorno dado dé problemas.
+DESCRIPCIÓN DEL DOCUMENTO
+Guía para la creación de un entorno virtual volátil apto para la realización de las
+prácticas de TSV/IVA en caso de que el entorno dado NO funcione.
 Antes del examen, prueba a ejecutar el código en el entorno virtual practicasTSV_env
 
 CREACIÓN DE UN ENTORNO DESDE CMD:
