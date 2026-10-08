@@ -30,14 +30,17 @@ def fusionar_lapl_pyr(lapl_pyr_imgA, lapl_pyr_imgB, gaus_pyr_mask):
     #       fusion_pyr[i] es el nivel i de la piramide que contiene bordes
     #       fusion_pyr[niveles] es una imagen (RGB o escala de grises)
     """ 
+    # Para poder operar, es importante que las pirámides tengan la MISMA longitud
     if not (len(lapl_pyr_imgA) == len(lapl_pyr_imgB) == len(gaus_pyr_mask)):
         return
     
     fusion_pyr = [] # iniciamos la variable
 
-    for _ in range(len(lapl_pyr_imgA)):
-        nivel_A = scipy.signal.convolve2d(lapl_pyr_imgA, gaus_pyr_mask, 'same')
-        nivel_B = scipy.signal.convolve2d(lapl_pyr_imgB, (1 - gaus_pyr_mask), 'same')
+    # La operación dada que debe cumplir esta función es:
+    #   Lf[i] = La[i] * Gm[i] + Lb[i] * (1 - Gm[i])
+    for i in range(len(lapl_pyr_imgA)):
+        nivel_A = lapl_pyr_imgA[i] * gaus_pyr_mask[i]
+        nivel_B = lapl_pyr_imgB[i] * (1 - gaus_pyr_mask[i])
         
         fusion_pyr.append(nivel_A + nivel_B)
     
@@ -64,11 +67,17 @@ def reconstruir_lapl_pyr(lapl_pyr):
     """ 
     output = np.empty(shape=[0,0]) # iniciamos la variable de salida (numpy array)
 
-    output = lapl_pyr[-1]
+    img_aux = lapl_pyr[-1] # en una laplaciana, la imagen completa (aunque reducida) está en el último elemento
     
+    # 
     for nvl in reversed(lapl_pyr[:-1]):
-        output = expand(output) + nvl
-    
+        img_aux = expand(img_aux)
+        if img_aux.shape != nvl.shape:
+            img_aux = img_aux[:nvl.shape[0], :nvl.shape[1]]
+        
+        img_aux = img_aux + nvl
+        
+    output = img_aux
     return output
 
 if __name__ == "__main__":    
