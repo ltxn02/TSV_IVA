@@ -9,7 +9,6 @@ import math
 import cv2
 import matplotlib.pyplot as plt
 
-from p1_tests import test_p1_tarea4
 from p1_utils import visualizar_fusion, visualizar_gaus_piramide, visualizar_lapl_piramide
 from pathlib import Path
 import p1_tarea1
@@ -29,10 +28,7 @@ def leer_imagen_cv2(path, flags):
 
     return img
 
-def mostrar_resultados(name_A, name_B, imgA, imgB, img_fus,
-        Gpyr_A_channels, Gpyr_B_channels, Gpyr_mask,
-        Lpyr_A_channels, Lpyr_B_channels, Lpyr_fus_channels
-):
+def mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, Gpyr_mask, Lpyr_fus_channels):
     """Muestra imágenes y pirámides de un caso de fusión RGB."""
 
     channel_names = ["R", "G", "B"]
@@ -259,7 +255,5 @@ if __name__ == "__main__":
         ) = run_fusion_rgb(imgA, imgB, mask, niveles)
 
         # Mostrar todo el caso en una ventana
-        mostrar_resultados(name_A, name_B, imgA, imgB, img_fus,
-            Gpyr_A_channels, Gpyr_B_channels, Gpyr_mask,
-            Lpyr_A_channels, Lpyr_B_channels, Lpyr_fus_channels
+        mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, Gpyr_mask, Lpyr_fus_channels
         )
