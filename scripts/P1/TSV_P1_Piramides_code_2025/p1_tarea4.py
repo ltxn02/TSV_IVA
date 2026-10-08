@@ -57,18 +57,19 @@ def run_fusion(imgA, imgB, mask, niveles):
     if not (len(imgA.shape) == len(imgB.shape) == 2):
         raise ValueError("Las matrices deberían ser bidimensionales (imágenes en escala de grises)")
     
-    # Conversión y normalización de imágenes y máscaras a tipo float
-    imgA = imgA.astype(float)/255
-    imgB = imgB.astype(float)/255
-    mask = mask.astype(float)/255
+    # Conversión de imágenes y máscaras a tipo float
+    # IMPORTANTE: la normalización se está llevando a cabo en las funciones de los otros .py
+    imgA = imgA.astype(float)
+    imgB = imgB.astype(float)
+    mask = mask.astype(float)
     
     # Cálculo de las pirámides Gaussianas de las imágenes
     Gpyr_imgA = p1_tarea2.gaus_piramide(imgA, niveles)
     Gpyr_imgB = p1_tarea2.gaus_piramide(imgB, niveles)
     
     # Cálculo de las pirámides Laplacianas de las imágenes
-    Lpyr_imgA = p1_tarea2.lapl_piramide(imgA, niveles)
-    Lpyr_imgB = p1_tarea2.lapl_piramide(imgB, niveles)
+    Lpyr_imgA = p1_tarea2.lapl_piramide(Gpyr_imgA)
+    Lpyr_imgB = p1_tarea2.lapl_piramide(Gpyr_imgB)
     
     # Fusionado de las pirámides Laplacianas de las imágenes y la Gaussiana de la máscara
     Gpyr_mask = p1_tarea2.gaus_piramide(mask, niveles)
@@ -77,11 +78,15 @@ def run_fusion(imgA, imgB, mask, niveles):
     # Reconstrucción de la imagen con la pirámide resultante para obtener la imagen
     Lpyr_fus_rec = p1_tarea3.reconstruir_lapl_pyr(Lpyr_fus)
     
+    # Recorta valores al intervalo [0, 1] y asegura valores en float
+    Lpyr_fus_rec = np.clip(Lpyr_fus_rec, 0.0, 1.0)
+    Lpyr_fus_rec = Lpyr_fus_rec.astype(float)
+    
     return Gpyr_imgA, Gpyr_imgB, Gpyr_mask, Lpyr_imgA, Lpyr_imgB, Lpyr_fus, Lpyr_fus_rec
 
 if __name__ == "__main__":    
-    
-    path_imagenes = Path(__file__).resolve().parent / "img"
+    # Se espera una cadena de texto como path para imágenes
+    path_imagenes = str(Path(__file__).resolve().parent / "img") + "/"
     print("Practica 1 - Tarea 4 - Test autoevaluación\n")    
     result,imgAgray,imgBgray,maskgray,\
         Gpyr_imgA, Gpyr_imgB, Gpyr_mask, Lpyr_imgA, Lpyr_imgB, Lpyr_fus, Lpyr_fus_rec \
