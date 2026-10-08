@@ -1,52 +1,58 @@
-# Entorno virtual en Windows (CMD)
+ENTORNO VIRTUAL EN WINDOWS (CMD + VS CODE)
 
-Python compatible: **3.12.0**.
+Este entorno se creará en:
+C:\Users\eps\Downloads\venv
 
-## Activar el entorno del laboratorio
+1. Abrir CMD.
 
-Abre **CMD** y ejecuta:
+2. Crear el entorno virtual:
 
-```bat
-C:\Users\eps\practicasTSV\practicasTSV_env\Scripts\activate.bat
-```
+cd /d C:\Users\eps\Downloads
+py -3.12 -m venv venv
 
-Si funciona, aparecerá `(practicasTSV_env)` al principio de la línea.
+3. Activar el entorno:
 
-Comprobar Python:
+C:\Users\eps\Downloads\venv\Scripts\activate.bat
 
-```bat
-python -V
-```
+Si se ha activado correctamente, CMD mostrará (venv) al principio de la línea.
 
-Salir del entorno:
+4. Comprobar Python:
 
-```bat
-deactivate
-```
-
-## Crear un entorno nuevo si el anterior falla
-
-Ejecuta estos comandos desde la carpeta del repositorio, donde está `requirements.txt`:
-
-```bat
-mkdir "%USERPROFILE%\practicasTSV"
-py -3.12 -m venv "%USERPROFILE%\practicasTSV\practicasTSV_env"
-"%USERPROFILE%\practicasTSV\practicasTSV_env\Scripts\activate.bat"
-python -m pip install --upgrade pip
-python -m pip install -r requirements.txt
-```
-
-Cuando aparezca `(practicasTSV_env)`, el entorno está activo.
-
-## Comprobación rápida
-
-```bat
 python -V
 where python
-```
 
-`where python` debe mostrar una ruta que termine en:
+Debe aparecer Python 3.12.0 y una ruta que termine en:
+C:\Users\eps\Downloads\venv\Scripts\python.exe
 
-```text
-practicasTSV_env\Scripts\python.exe
-```
+5. Instalar las dependencias del proyecto.
+
+Si requirements.txt está en C:\Users\eps\Downloads, ejecutar:
+
+python -m pip install --upgrade pip
+python -m pip install -r C:\Users\eps\Downloads\requirements.txt
+
+6. Seleccionar el entorno en VS Code.
+
+Abrir en VS Code la carpeta del proyecto.
+
+Pulsar Ctrl + Shift + P.
+
+Buscar y seleccionar:
+Python: Select Interpreter
+
+Elegir este intérprete:
+C:\Users\eps\Downloads\venv\Scripts\python.exe
+
+7. Ejecutar o depurar.
+
+Abrir el archivo .py en VS Code.
+
+Para ejecutar:
+Pulsar el botón ▶ de la esquina superior derecha.
+
+Para depurar:
+Pulsar F5 o seleccionar Run and Debug.
+
+8. Salir del entorno en CMD:
+
+deactivate
