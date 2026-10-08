@@ -11,6 +11,7 @@ import math
 
 from p1_tests import test_p1_tarea4
 from p1_utils import visualizar_fusion
+from pathlib import Path
 import p1_tarea1
 import p1_tarea2
 import p1_tarea3
@@ -52,12 +53,35 @@ def run_fusion(imgA, imgB, mask, niveles):
     Lpyr_fus = []       # Pirámide Laplaciana fusionada
     Lpyr_fus_rec = []   # Imagen reconstruida de la pirámide Laplaciana fusionada
 
-    #...
+    # Verificación de que las imágenes son en escala de grises
+    if not (len(imgA.shape) == len(imgB.shape) == 2):
+        raise ValueError("Las matrices deberían ser bidimensionales (imágenes en escala de grises)")
+    
+    # Conversión y normalización de imágenes y máscaras a tipo float
+    imgA = imgA.astype(float)/255
+    imgB = imgB.astype(float)/255
+    mask = mask.astype(float)/255
+    
+    # Cálculo de las pirámides Gaussianas de las imágenes
+    Gpyr_imgA = p1_tarea2.gaus_piramide(imgA, niveles)
+    Gpyr_imgB = p1_tarea2.gaus_piramide(imgB, niveles)
+    
+    # Cálculo de las pirámides Laplacianas de las imágenes
+    Lpyr_imgA = p1_tarea2.lapl_piramide(imgA, niveles)
+    Lpyr_imgB = p1_tarea2.lapl_piramide(imgB, niveles)
+    
+    # Fusionado de las pirámides Laplacianas de las imágenes y la Gaussiana de la máscara
+    Gpyr_mask = p1_tarea2.gaus_piramide(mask, niveles)
+    Lpyr_fus = p1_tarea3.fusionar_lapl_pyr(Lpyr_imgA, Lpyr_imgB, Gpyr_mask)
+    
+    # Reconstrucción de la imagen con la pirámide resultante para obtener la imagen
+    Lpyr_fus_rec = p1_tarea3.reconstruir_lapl_pyr(Lpyr_fus)
     
     return Gpyr_imgA, Gpyr_imgB, Gpyr_mask, Lpyr_imgA, Lpyr_imgB, Lpyr_fus, Lpyr_fus_rec
+
 if __name__ == "__main__":    
     
-    path_imagenes = "./p1/img/"
+    path_imagenes = Path(__file__).resolve().parent / "img"
     print("Practica 1 - Tarea 4 - Test autoevaluación\n")    
     result,imgAgray,imgBgray,maskgray,\
         Gpyr_imgA, Gpyr_imgB, Gpyr_mask, Lpyr_imgA, Lpyr_imgB, Lpyr_fus, Lpyr_fus_rec \
