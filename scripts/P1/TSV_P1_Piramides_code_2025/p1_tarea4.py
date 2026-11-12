@@ -51,12 +51,15 @@ def run_fusion(imgA, imgB, mask, niveles):
     Lpyr_fus = []       # Pirámide Laplaciana fusionada
     Lpyr_fus_rec = []   # Imagen reconstruida de la pirámide Laplaciana fusionada
 
-    # Verificación de que las imágenes son en escala de grises
+    # Verificación de que las imágenes son en escala de grises (matrices 2D)
     if not (len(imgA.shape) == len(imgB.shape) == 2):
         raise ValueError("Las matrices deberían ser bidimensionales (imágenes en escala de grises)")
     
     # Conversión de imágenes y máscaras a tipo float
     # IMPORTANTE: la normalización se está llevando a cabo en las funciones de los otros .py
+    # ------------------------------------------------------------------------------
+    # Se convierten a float para evitar problemas en las operaciones de convolución,
+    # resta y combinación ponderada
     imgA = imgA.astype(float)
     imgB = imgB.astype(float)
     mask = mask.astype(float)
@@ -65,22 +68,27 @@ def run_fusion(imgA, imgB, mask, niveles):
     Gpyr_imgA = p1_tarea2.gaus_piramide(imgA, niveles)
     Gpyr_imgB = p1_tarea2.gaus_piramide(imgB, niveles)
     
-    # Cálculo de las pirámides Laplacianas de las imágenes
+    # Cálculo de las pirámides Laplacianas de las imágenes a partir de las Gaussianas
     Lpyr_imgA = p1_tarea2.lapl_piramide(Gpyr_imgA)
     Lpyr_imgB = p1_tarea2.lapl_piramide(Gpyr_imgB)
     
-    # Fusionado de las pirámides Laplacianas de las imágenes y la Gaussiana de la máscara
+    # La máscara también necesita una Gaussiana para realizar una transición suave
     Gpyr_mask = p1_tarea2.gaus_piramide(mask, niveles)
+    
+    # Se combinan los detalles de A y B usando la máscara
     Lpyr_fus = p1_tarea3.fusionar_lapl_pyr(Lpyr_imgA, Lpyr_imgB, Gpyr_mask)
     
-    # Reconstrucción de la imagen con la pirámide resultante para obtener la imagen
+    # Reconstrucción de la imagen fusionada
     Lpyr_fus_rec = p1_tarea3.reconstruir_lapl_pyr(Lpyr_fus)
     
-    # Recorta valores al intervalo [0, 1] y asegura valores en float
+    # La reconstrucción puede generar valores fuera del rango válido.
+    # Se limitan al intervalo [0, 1]
     Lpyr_fus_rec = np.clip(Lpyr_fus_rec, 0.0, 1.0)
     Lpyr_fus_rec = Lpyr_fus_rec.astype(float)
     
     return Gpyr_imgA, Gpyr_imgB, Gpyr_mask, Lpyr_imgA, Lpyr_imgB, Lpyr_fus, Lpyr_fus_rec
+
+
 
 if __name__ == "__main__":    
     # Se espera una cadena de texto como path para imágenes

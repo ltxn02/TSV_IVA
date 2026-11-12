@@ -25,9 +25,11 @@ def gaus_piramide(imagen, niveles):
     """ 
     gaus_pyr = []  # iniciamos la variable de salida (lista)
 
+    # El primer nivel de la pirámide es la imagen original
     gaus_pyr.append(imagen)
     img_actual = imagen
     
+    # Cada iteración reduce la imagen y crea un nivel más pequeño
     for _ in range(niveles):
         img_actual = reduce(img_actual)
         gaus_pyr.append(img_actual)
@@ -68,9 +70,11 @@ def lapl_piramide(gaus_pyr):
         img_expandida = img_expandida[:alto, :ancho]
         
         # Nivel Laplaciano = Nivel Gaussiano - expansión del siguiente Nivel Gaussiano
+        # La imagen Laplaciana contiene la info perdida entre dos niveles Gaussianos seguidos
         nvl_lapl = gaus_pyr[i] - img_expandida
         lapl_pyr.append(nvl_lapl)
 
+    # El último nivel NO se calcula: se conserva la imagen Gaussiana más pequeña como base
     lapl_pyr.append(gaus_pyr[-1])
     return lapl_pyr
    

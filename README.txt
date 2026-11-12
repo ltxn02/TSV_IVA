@@ -5,7 +5,7 @@ Alumna: Lidia Martín Terés
 
 DESCRIPCIÓN DEL DOCUMENTO
 Guía para la creación de un entorno virtual volátil apto para la realización de las
-prácticas de TSV/IVA en caso de que el entorno dado NO funcione.
+prácticas de TSV/IVA en caso de que el entorno dado en los laboratiors NO funcione.
 Antes del examen, prueba a ejecutar el código en el entorno virtual practicasTSV_env
 
 CREACIÓN DE UN ENTORNO DESDE CMD:

@@ -27,7 +27,7 @@ def leer_imagen_cv2(path, flags):
 
     return img
 
-def mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, Gpyr_mask, Lpyr_fus_channels):
+def mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, mask, Gpyr_mask, Lpyr_fus_channels):
     """Muestra imágenes y pirámides de un caso de fusión RGB."""
 
     channel_names = ["R", "G", "B"]
@@ -83,6 +83,8 @@ def mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, Gpyr_mask, Lpyr_fus_
     plt.show()
 
 # ========================================================
+#  CÓDIGO PRINCIPAL
+# ========================================================
 
 def run_fusion_rgb(imgA, imgB, mask, niveles):
     """ 
@@ -112,37 +114,48 @@ def run_fusion_rgb(imgA, imgB, mask, niveles):
     #               a la reconstruccion de la pirámide Lpyr_fus
     """ 
 
+    # Se comprueba que ambas entradas sean imágenes RGB, es decir, matrices 3D con 3 canales
     if imgA.ndim != 3 or imgA.shape[2] != 3:
         raise ValueError("imgA debe ser una imagen RGB")
-
     if imgB.ndim != 3 or imgB.shape[2] != 3:
         raise ValueError("imgB debe ser una imagen RGB")
 
-    # Convertir a float y normalizar a [0, 1]
+    # Normalizar los valores de las imágenes y de la máscara a [0, 1]
     imgA = imgA.astype(float) / 255.0
     imgB = imgB.astype(float) / 255.0
     mask = mask.astype(float) / 255.0
 
     # Listas para almacenar los resultados de los tres canales
     channel_fus = []
-
     Gpyr_A_channels = []
     Gpyr_B_channels = []
     Gpyr_mask = None
-
     Lpyr_A_channels = []
     Lpyr_B_channels = []
     Lpyr_fus_channels = []
 
+    # La fusión se realiza canal a canal, ya que se reutilizarán las funciones anteriores
+    # que trabajan con imágenes 2D
     for canal in range(3):
         # Cada canal es ahora una imagen 2D
         channel_A = imgA[:, :, canal]
         channel_B = imgB[:, :, canal]
 
-        # Utilizar la función desarrollada en la tarea 4
-        (   Gpyr_A, Gpyr_B, Gpyr_mask_actual,
-            Lpyr_A, Lpyr_B, Lpyr_fus, channel_rec
-        ) = p1_tarea4.run_fusion(channel_A, channel_B, mask, niveles)
+        # Se aplica la fusión completa (run_fusion()) al canal actual
+        # El mismo procedimiento se repite para R, G, B 
+        (   Gpyr_A, 
+            Gpyr_B, 
+            Gpyr_mask_actual,
+            Lpyr_A, 
+            Lpyr_B, 
+            Lpyr_fus,
+            channel_rec
+        ) = p1_tarea4.run_fusion(
+            channel_A, 
+            channel_B, 
+            mask, 
+            niveles
+        )
 
         # La pirámide de la máscara es la misma para los tres canales. Solo es necesario una copia
         if Gpyr_mask is None:
@@ -159,16 +172,21 @@ def run_fusion_rgb(imgA, imgB, mask, niveles):
         # Reconstruir este canal
         channel_fus.append(channel_rec)
 
-    # Reunir los canales R, G y B
+    # Se vuelven a juntar los tres canales fusionados para reconstruir la imagen RGB
     img_fus = np.stack(channel_fus, axis=2)
 
-    # Limitar la imagen final a [0, 1]
+    # Limitar los valores de la imagen final a [0, 1]
     img_fus = np.clip(img_fus, 0.0, 1.0)
     img_fus = img_fus.astype(float)
 
     return (
-        img_fus, Gpyr_A_channels, Gpyr_B_channels, Gpyr_mask,
-        Lpyr_A_channels, Lpyr_B_channels, Lpyr_fus_channels
+        img_fus,
+        Gpyr_A_channels,
+        Gpyr_B_channels,
+        Gpyr_mask,
+        Lpyr_A_channels,
+        Lpyr_B_channels,
+        Lpyr_fus_channels
     )
 
 
@@ -211,9 +229,19 @@ if __name__ == "__main__":
         imgB = cv2.cvtColor(imgB, cv2.COLOR_BGR2RGB)
 
         # Ejecutar la fusión
-        (   img_fus, Gpyr_A_channels, Gpyr_B_channels, Gpyr_mask, 
-            Lpyr_A_channels, Lpyr_B_channels, Lpyr_fus_channels
-        ) = run_fusion_rgb(imgA, imgB, mask, niveles)
+        (   img_fus, 
+            Gpyr_A_channels, 
+            Gpyr_B_channels, 
+            Gpyr_mask, 
+            Lpyr_A_channels, 
+            Lpyr_B_channels, 
+            Lpyr_fus_channels
+        ) = run_fusion_rgb(
+            imgA, 
+            imgB, 
+            mask, 
+            niveles
+        )
 
         # Mostrar todo el caso en una ventana
-        mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, Gpyr_mask, Lpyr_fus_channels)
+        mostrar_resultados(name_A, name_B, imgA, imgB, img_fus, mask, Gpyr_mask, Lpyr_fus_channels)

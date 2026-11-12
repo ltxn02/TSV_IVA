@@ -11,7 +11,6 @@ from pathlib import Path
 
 from p1_pregunta_01 import (leer_imagen_cv2, run_fusion_rgb)
 
-
 if __name__ == "__main__":
     path_img = Path(__file__).resolve().parent / "img"
 
@@ -28,7 +27,9 @@ if __name__ == "__main__":
         )
     }
 
-    niveles_exp = [1, 2, 3, 4, 5]
+    # Se prueban distinto números de niveles de pirámide para observar cómo
+    # cambia la calidad de la fusión
+    niveles_exp = [1, 2, 3, 4, 5, 10]
 
     for name_case, name_files in data.items():
         name_A, name_B, name_mask = name_files
@@ -50,20 +51,38 @@ if __name__ == "__main__":
 
         axes = axes.ravel()
 
+        # Para cada número de niveles se vuelve a realizar toda la fusión RGB
+        # desde el principio
         for i, niveles in enumerate(niveles_exp):
-            (   img_fus, Gpyr_A_channels, Gpyr_B_channels, Gpyr_mask,
-                Lpyr_A_channels, Lpyr_B_channels, Lpyr_fus_channels
-            ) = run_fusion_rgb(imgA, imgB, mask, niveles)
+            (   img_fus, 
+                Gpyr_A_channels, 
+                Gpyr_B_channels, 
+                Gpyr_mask,
+                Lpyr_A_channels, 
+                Lpyr_B_channels, 
+                Lpyr_fus_channels
+            ) = run_fusion_rgb(
+                imgA, 
+                imgB, 
+                mask, 
+                niveles
+            )
 
+            # Se muestra el resultado correspondiente al número de niveles usado
             axes[i].imshow(img_fus)
             axes[i].set_title(f"Niveles = {niveles}")
             axes[i].axis("off")
 
-        # Ocultar posibles subplots sobrantes
+        # Oculta los subplots que no se utilizan (cuadrícula 2x3, pero solo se prueban 5 casos)
         for i in range(len(niveles_exp), len(axes)):
             axes[i].axis("off")
 
         fig.tight_layout()
-        fig.savefig(f"experimento_niveles_{name_case}.png", dpi=300, bbox_inches="tight")
+        # Se guarda la figura para poder comparar los resultados posteriormente
+        fig.savefig(
+            f"experimento_niveles_{name_case}.png", 
+            dpi=300, 
+            bbox_inches="tight"
+        )
 
         plt.show()

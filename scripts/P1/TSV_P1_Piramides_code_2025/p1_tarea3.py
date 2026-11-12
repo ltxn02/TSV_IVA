@@ -30,7 +30,7 @@ def fusionar_lapl_pyr(lapl_pyr_imgA, lapl_pyr_imgB, gaus_pyr_mask):
     #       fusion_pyr[i] es el nivel i de la piramide que contiene bordes
     #       fusion_pyr[niveles] es una imagen (RGB o escala de grises)
     """ 
-    # Para poder operar, es importante que las pirámides tengan la MISMA longitud
+    # Para poder operar, es importante que las pirámides tengan el mismo número de niveles
     if not (len(lapl_pyr_imgA) == len(lapl_pyr_imgB) == len(gaus_pyr_mask)):
         return
     
@@ -38,10 +38,15 @@ def fusionar_lapl_pyr(lapl_pyr_imgA, lapl_pyr_imgB, gaus_pyr_mask):
 
     # La operación dada que debe cumplir esta función es:
     #   Lf[i] = La[i] * Gm[i] + Lb[i] * (1 - Gm[i])
+    # -------------------------------------------------------------------------------
+    # La máscara indica cuánto se toma de cada imagen:
+    # · máscara = 1 > se utiliza la imagen A
+    # · máscara = 0 > se utilica la imagen B
     for i in range(len(lapl_pyr_imgA)):
         nivel_A = lapl_pyr_imgA[i] * gaus_pyr_mask[i]
         nivel_B = lapl_pyr_imgB[i] * (1 - gaus_pyr_mask[i])
         
+        # Se suman las contribuciones para obtener el nivel fusionado
         fusion_pyr.append(nivel_A + nivel_B)
     
     return fusion_pyr
@@ -67,14 +72,18 @@ def reconstruir_lapl_pyr(lapl_pyr):
     """ 
     output = np.empty(shape=[0,0]) # iniciamos la variable de salida (numpy array)
 
-    img_aux = lapl_pyr[-1] # en una laplaciana, la imagen completa (aunque reducida) está en el último elemento
+    # El último nivel contiene la imagen de menor resolución, es decir, la base
+    img_aux = lapl_pyr[-1]
     
-    # 
+    # Se reconstruye desde el nivel más pequeño hacia el nivel original (terminando antes del último nivel)
     for nvl in reversed(lapl_pyr[:-1]):
         img_aux = expand(img_aux)
+        
+        # Se ajustan las dimensiones antes de sumar
         if img_aux.shape != nvl.shape:
             img_aux = img_aux[:nvl.shape[0], :nvl.shape[1]]
         
+        # Se reincorporan los detalles almacenados en el nivel Laplaciano
         img_aux = img_aux + nvl
         
     output = img_aux
