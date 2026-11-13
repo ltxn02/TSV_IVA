@@ -2,9 +2,7 @@
 # Practica 2: Extraccion, descripcion y correspondencia de caracteristicas locales
 # Tarea 3:  Similitud y correspondencia de puntos de interes
 
-# AUTOR1: APELLIDO1 APELLIDO1, NOMBRE1
-# AUTOR2: APELLIDO2 APELLIDO2, NOMBRE2
-# PAREJA/TURNO: NUMERO_PAREJA/NUMERO_TURNO
+# AUTORA: Lidia Martín Terés
 
 # librerias y paquetes por defecto
 import numpy as np
