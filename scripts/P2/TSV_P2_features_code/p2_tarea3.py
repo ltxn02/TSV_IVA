@@ -51,10 +51,52 @@ def correspondencias_puntos_interes(descriptores_imagen1, descriptores_imagen2, 
     #    indice/posicion menor. Por ejemplo, si las correspondencias [5,22] y [5,23] tienen la misma
     #    distancia minima, seleccione [5,22] al ser el indice 22 menor que 23
     """    
-    correspondencias = np.empty(shape=[0,2]) # iniciamos la variable de salida (numpy array)        
+    correspondencias = np.empty(shape=[0,2], dtype=int) # iniciamos la variable de salida (numpy array)        
    
-    #incluya su codigo aqui
-    #...
+    # Comprobar que se utiliza el criterio solicitado
+    if tipoCorr != 'mindist':
+        raise ValueError("tipoCorr debe ser 'mindist'")
+    
+    # Declarar set para almacenar índices de la imagen2 ya utilizados
+    descriptores_usados = set()
+    
+    # ----------------------------------------------------------------------------------------------------------------------------
+    # 1. Recorrer cada descriptor de la imagen 1
+    # ----------------------------------------------------------------------------------------------------------------------------
+    for indice1, descriptor1 in enumerate(descriptores_imagen1):
+        # Índice y distancia del mejor candidato encontrado
+        mejor_indice2 = None
+        menor_distancia = np.inf
+        
+        # -----------------------------------------------------------------------------------------------------------------------
+        # 2. Comparar el descriptor actual con los de la imagen 2
+        # -----------------------------------------------------------------------------------------------------------------------
+        for indice2, descriptor2 in enumerate(descriptores_imagen2):
+            # NO permitir que se use un mismo descriptor 2 para más de una correspondencia
+            if indice2 in descriptores_usados:
+                continue
+            
+            # Calcular la distancia euclídea entre ambos descriptores
+            distancia = np.linalg.norm(descriptor1 - descriptor2)
+            
+            # Guardar el candidato con menor distancia
+            # Al usar '<', si hay empate se conserva el primero encontrado
+            if distancia < menor_distancia:
+                menor_distancia = distancia
+                mejor_indice2 = indice2
+                
+        # -----------------------------------------------------------------------------------------------------------------------
+        # 3. Comprobar el umbral de distancia
+        # -----------------------------------------------------------------------------------------------------------------------
+        if (
+            mejor_indice2 is not None
+            and menor_distancia < max_distancia
+        ):
+            # Añadir la correspondencia
+            correspondencias = np.vstack((correspondencias, [indice1, mejor_indice2]))
+            
+            # Marcar como usado
+            descriptores_usados.add(mejor_indice2)
 
     return correspondencias
 
@@ -63,5 +105,5 @@ if __name__ == "__main__":
 
     ## tests correspondencias tipo 'minDist' (tarea 3a)
     print("Tests completados = " + str(test_p2_tarea3(disptime=-1,stop_at_error=True,debug=True,tipoDesc='hist',tipoCorr='mindist'))) #analizar todas las imagenes con descriptor 'hist' y ver errores
-    #print("Tests completados = " + str(test_p2_tarea3(disptime=-1,stop_at_error=False,debug=False,tipoDesc='hist',tipoCorr='mindist'))) #analizar todas las imagenes con descriptor 'hist'
-    #print("Tests completados = " + str(test_p2_tarea3(disptime=1,stop_at_error=False,debug=False,tipoDesc='mag-ori',tipoCorr='mindist'))) #analizar todas las imagenes con descriptor 'mag-ori'
+    print("Tests completados = " + str(test_p2_tarea3(disptime=-1,stop_at_error=False,debug=False,tipoDesc='hist',tipoCorr='mindist'))) #analizar todas las imagenes con descriptor 'hist'
+    print("Tests completados = " + str(test_p2_tarea3(disptime=1,stop_at_error=False,debug=False,tipoDesc='mag-ori',tipoCorr='mindist'))) #analizar todas las imagenes con descriptor 'mag-ori'
